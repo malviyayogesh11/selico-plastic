@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories | {{ company_details.name }}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AngularJS (CDN) for UI Logic as requested -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="selicoApp" ng-controller="CartController">
+    <nav class="navbar" style="background: rgba(255, 255, 255, 1); border-bottom: 1px solid rgba(0,0,0,0.1);">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="https://5.imimg.com/data5/OO/ID/MY-4428719/selico-plastic-120x120.png" alt="Selico Plastic" style="height: 45px; background: white; padding: 4px; border-radius: 8px;">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'categories' %}" style="color: var(--primary); font-weight: bold;">Categories</a>
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="{% url 'contact' %}">Contact Us</a>
+        </div>
+        <div class="nav-actions">
+            <button class="cart-btn" ng-click="openCart()" style="color: var(--text-main);"><i class="fas fa-shopping-cart"></i> <span id="cart-count" ng-bind="cart.length"></span></button>
+            <div class="mobile-menu-btn" onclick="toggleMenu()" style="color: var(--text-main);"><i class="fas fa-bars"></i></div>
+        </div>
+    </nav>
+
+    <div style="height: 80px;"></div> <!-- Spacer for fixed navbar -->
+
+    <section id="categories" class="products-section" style="padding-top: 4rem;">
+        <div class="section-header">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Our Products</h1>
+            <p>Browse our complete catalog of high-quality plastic containers and household items.</p>
+        </div>
+        
+        {% for category in categories %}
+            {% if category.products.exists %}
+            <h2 style="margin-top:3rem; margin-bottom:1.5rem; color:var(--primary); font-size: 2rem; padding-left: 5%;">{{ category.name }}</h2>
+            <div class="product-grid" style="padding: 0 5%;">
+                {% for product in category.products.all %}
+                <div class="product-card">
+                    <div class="product-img">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" style="background: white; width: 100%; height: 100%; object-fit: contain;">
+                        {% else %}
+                        <div style="color:var(--text-muted);">No Image</div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.name }}</h3>
+                        <p class="price">₹{{ product.price }} / Piece</p>
+                        <button class="btn btn-outline" ng-click="addToCart('{{ product.name }}', {{ product.price }})">Add to Cart</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </section>
+
+    {% include 'core/footer.html' %}
+
+    <!-- Cart Modal using AngularJS -->
+    <div id="cart-modal" class="modal" ng-show="isCartOpen" style="display:block;">
+        <div class="modal-content">
+            <span class="close" ng-click="closeCart()">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <p ng-if="cart.length === 0" style="color: #94a3b8; text-align: center; padding: 2rem 0;">Your cart is empty.</p>
+                <div class="cart-item" ng-repeat="item in cart">
+                    <div class="cart-item-info">
+                        <div class="cart-item-title" ng-bind="item.name"></div>
+                        <div class="cart-item-price">₹<span ng-bind="item.price.toFixed(2)"></span></div>
+                    </div>
+                    <button style="background:none;border:none;color:#ef4444;cursor:pointer;" ng-click="removeFromCart($index)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="cart-total">
+                <strong>Total: </strong>
+                <span>₹<span ng-bind="getTotal().toFixed(2)"></span></span>
+            </div>
+            <button class="btn btn-primary btn-block mt-4" ng-click="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="{% static 'script.js' %}"></script>
+    <script>
+        var app = angular.module('selicoApp', []);
+        app.controller('CartController', function($scope, $window, $timeout) {
+            $scope.cart = JSON.parse($window.localStorage.getItem('selicoCart')) || [];
+            $scope.isCartOpen = false;
+
+            $scope.saveCart = function() {
+                $window.localStorage.setItem('selicoCart', JSON.stringify($scope.cart));
+            };
+
+            $scope.addToCart = function(name, price) {
+                $scope.cart.push({ name: name, price: price });
+                $scope.saveCart();
+                showNotification(name + ' added to cart!');
+            };
+
+            $scope.removeFromCart = function(index) {
+                $scope.cart.splice(index, 1);
+                $scope.saveCart();
+            };
+
+            $scope.getTotal = function() {
+                var total = 0;
+                for(var i = 0; i < $scope.cart.length; i++){
+                    total += $scope.cart[i].price;
+                }
+                return total;
+            };
+
+            $scope.openCart = function() {
+                $scope.isCartOpen = true;
+            };
+
+            $scope.closeCart = function() {
+                $scope.isCartOpen = false;
+            };
+
+            $scope.checkout = function() {
+                if($scope.cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
+                alert("Proceeding to checkout with " + $scope.cart.length + " items.");
+                $scope.cart = [];
+                $scope.saveCart();
+                $scope.isCartOpen = false;
+            };
+            
+            // Notification logic
+            function showNotification(msg) {
+                const notif = document.createElement('div');
+                notif.innerText = msg;
+                notif.style.position = 'fixed';
+                notif.style.bottom = '20px';
+                notif.style.right = '20px';
+                notif.style.background = '#10b981';
+                notif.style.color = 'white';
+                notif.style.padding = '1rem 2rem';
+                notif.style.borderRadius = '10px';
+                notif.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                notif.style.zIndex = '9999';
+                notif.style.opacity = '0';
+                notif.style.transition = 'opacity 0.3s ease';
+                
+                document.body.appendChild(notif);
+                
+                setTimeout(() => { notif.style.opacity = '1'; }, 10);
+                
+                setTimeout(() => {
+                    notif.style.opacity = '0';
+                    setTimeout(() => document.body.removeChild(notif), 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

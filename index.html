@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selico Plastic | Premium Plastic Containers</title>
+    <meta name="description" content="Manufacturer of Plastic Container, Plastic Box & Plastic Lunch Box offered by Selico Plastic from Mumbai, Maharashtra, India">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Selico <span>Plastic</span></div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#products">Products</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact Us</a>
+        </div>
+        <div class="nav-actions">
+            <button class="cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span></button>
+            <div class="mobile-menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Premium Plastic Solutions for Every Need</h1>
+            <p>Discover our high-quality range of plastic containers, lunch boxes, and kitchenware manufactured in Mumbai.</p>
+            <div class="hero-buttons">
+                <a href="#products" class="btn btn-primary">Shop Now</a>
+                <a href="#about" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="products" class="products-section">
+        <div class="section-header">
+            <h2>Our Top Products</h2>
+            <p>Explore our best-selling plastic containers and boxes.</p>
+        </div>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="assets/dates_box.png" alt="Kimia Dates Box">
+                </div>
+                <div class="product-info">
+                    <h3>Kimia Dates Box</h3>
+                    <p class="price">₹120.00 / Piece</p>
+                    <button class="btn btn-outline" onclick="addToCart('Kimia Dates Box', 120, 'assets/dates_box.png')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="assets/lunch_box.png" alt="Kids Plastic Lunch Box">
+                </div>
+                <div class="product-info">
+                    <h3>Kids Plastic Lunch Box</h3>
+                    <p class="price">₹250.00 / Piece</p>
+                    <button class="btn btn-outline" onclick="addToCart('Kids Lunch Box', 250, 'assets/lunch_box.png')">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="assets/bowl_set.png" alt="Plastic Bowl Set">
+                </div>
+                <div class="product-info">
+                    <h3>Premium Bowl Set</h3>
+                    <p class="price">₹350.00 / Set</p>
+                    <button class="btn btn-outline" onclick="addToCart('Premium Bowl Set', 350, 'assets/bowl_set.png')">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>About Selico Plastic</h2>
+                <p>Based in Mumbai, Maharashtra, Selico Plastic is a leading manufacturer of premium plastic containers, sweet boxes, and kitchenware. Since 2017, we've been committed to delivering durable, stylish, and high-quality products to homes and businesses across India.</p>
+                <ul class="features">
+                    <li><i class="fas fa-check-circle"></i> High-Grade Materials</li>
+                    <li><i class="fas fa-check-circle"></i> ISO Certified</li>
+                    <li><i class="fas fa-check-circle"></i> Pan-India Delivery</li>
+                </ul>
+            </div>
+            <div class="about-stats">
+                <div class="stat-box">
+                    <h3>50+</h3>
+                    <p>Products</p>
+                </div>
+                <div class="stat-box">
+                    <h3>1000+</h3>
+                    <p>Happy Clients</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+                <p>Ready to place a bulk order or have an inquiry? Reach out to us!</p>
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Mumbai, Maharashtra, India</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>info@selicoplastics.net</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+91 99999 99999</span>
+                </div>
+            </div>
+            <form class="contact-form" onsubmit="submitForm(event)">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Email Address" required>
+                <textarea rows="4" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Selico <span>Plastic</span></div>
+            <p>&copy; 2026 Selico Plastic. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <!-- Items will be injected here by JS -->
+            </div>
+            <div class="cart-total">
+                <strong>Total: </strong>
+                <span id="cart-total-price">₹0.00</span>
+            </div>
+            <button class="btn btn-primary btn-block mt-4" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
